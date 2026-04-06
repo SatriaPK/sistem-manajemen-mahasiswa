@@ -1,0 +1,152 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=JetBrains+Mono:wght@400;500;700&display=swap');
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+    --color-bg-primary: #0a0a0a;
+    --color-bg-secondary: #141414;
+    --color-bg-tertiary: #1e1e1e;
+    --color-border-default: #2a2a2a;
+    --color-border-active: #ffffff;
+    --color-text-primary: #f0f0f0;
+    --color-text-secondary: #888888;
+    --color-text-muted: #555555;
+    --color-accent: #ffffff;
+    --color-danger: #ff3333;
+    --color-success-muted: #a0a0a0;
+
+    --font-pixel: 'Press Start 2P', monospace;
+    --font-mono: 'JetBrains Mono', 'IBM Plex Mono', monospace;
+    --font-sans: 'JetBrains Mono', monospace;
+}
+
+/* Base */
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+    background-color: #0a0a0a;
+    color: #f0f0f0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+/* Scan-line overlay */
+body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 2px,
+        rgba(0,0,0,0.03) 2px,
+        rgba(0,0,0,0.03) 4px
+    );
+    pointer-events: none;
+    z-index: 9999;
+}
+
+/* Game-style input */
+.game-input {
+    background: #141414;
+    border: 1px solid #2a2a2a;
+    color: #f0f0f0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.1s;
+}
+.game-input:focus {
+    border-color: #ffffff;
+}
+
+/* Game-style select */
+select.game-input {
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M0 0l6 8 6-8z' fill='%23888'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    padding-right: 2.5rem;
+}
+
+/* Game-style button */
+.game-btn {
+    background: transparent;
+    border: 1px solid #ffffff;
+    color: #ffffff;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    border-radius: 0;
+    transition: background 0.1s, color 0.1s;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+}
+.game-btn:hover {
+    background: #ffffff;
+    color: #0a0a0a;
+}
+.game-btn-primary {
+    background: #ffffff;
+    color: #0a0a0a;
+}
+.game-btn-primary:hover {
+    background: transparent;
+    color: #ffffff;
+}
+.game-btn-danger {
+    border-color: #ff3333;
+    color: #ff3333;
+}
+.game-btn-danger:hover {
+    background: #ff3333;
+    color: #0a0a0a;
+}
+.game-btn-sm {
+    font-size: 10px;
+    padding: 0.3rem 0.6rem;
+}
+
+/* Blinking cursor */
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+}
+.blink { animation: blink 1s step-end infinite; }
+
+/* Pagination game style */
+.pagination { display: flex; gap: 4px; list-style: none; padding: 0; margin: 0; }
+.pagination .page-item .page-link {
+    background: #141414;
+    border: 1px solid #2a2a2a;
+    color: #888888;
+    padding: 0.3rem 0.6rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    text-decoration: none;
+    transition: all 0.1s;
+}
+.pagination .page-item.active .page-link {
+    background: #ffffff;
+    color: #0a0a0a;
+    border-color: #ffffff;
+}
+.pagination .page-item .page-link:hover {
+    border-color: #ffffff;
+    color: #ffffff;
+}
