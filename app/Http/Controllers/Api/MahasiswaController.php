@@ -20,6 +20,24 @@ class MahasiswaController extends Controller
         ], 200);
     }
 
+    public function show($id)
+    {
+        $mahasiswa = Mahasiswa::with('prodi.jurusan')->find($id);
+
+        if (!$mahasiswa) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data mahasiswa tidak ditemukan',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Detail data mahasiswa berhasil diambil',
+            'data'    => $mahasiswa,
+        ], 200);
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
