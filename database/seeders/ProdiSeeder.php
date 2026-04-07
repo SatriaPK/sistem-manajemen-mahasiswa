@@ -11,10 +11,9 @@ class ProdiSeeder extends Seeder
     public function run(): void
     {
         $data = [
-            'Teknik'           => ['Teknik Informatika', 'Teknik Elektro', 'Teknik Mesin'],
-            'MIPA'             => ['Matematika', 'Fisika', 'Kimia'],
-            'Ekonomi & Bisnis' => ['Manajemen', 'Akuntansi', 'Ekonomi Pembangunan'],
-            'Ilmu Sosial'      => ['Sosiologi', 'Ilmu Komunikasi'],
+            'Ekonomika dan Bisnis'           => ['S1 Manajemen', 'S1 Akuntansi'],
+            'Sains dan Teknologi'            => ['S1 Informatika', 'S1 Rekayasa Perangkat Lunak', 'S1 Sistem Informasi'],
+            'Sosial dan Humaniora'           => ['S1 Bahasa Inggris', 'S1 Pariwisata', 'D3 Bahasa Inggris'],
         ];
 
         foreach ($data as $fakultasNama => $prodis) {
