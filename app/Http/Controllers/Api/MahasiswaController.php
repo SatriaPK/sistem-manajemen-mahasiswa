@@ -11,7 +11,7 @@ class MahasiswaController extends Controller
 {
     public function index()
     {
-        $mahasiswas = Mahasiswa::with('prodi.jurusan')->get();
+        $mahasiswas = Mahasiswa::with('prodi.fakultas')->get();
 
         return response()->json([
             'success' => true,
@@ -22,7 +22,7 @@ class MahasiswaController extends Controller
 
     public function show($id)
     {
-        $mahasiswa = Mahasiswa::with('prodi.jurusan')->find($id);
+        $mahasiswa = Mahasiswa::with('prodi.fakultas')->find($id);
 
         if (!$mahasiswa) {
             return response()->json([
@@ -89,7 +89,7 @@ class MahasiswaController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Data mahasiswa berhasil diperbarui',
-            'data'    => $mahasiswa->fresh('prodi.jurusan'),
+            'data'    => $mahasiswa->fresh('prodi.fakultas'),
         ], 200);
     }
 
