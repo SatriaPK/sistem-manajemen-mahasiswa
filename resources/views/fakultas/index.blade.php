@@ -9,6 +9,7 @@
 </div>
 
 <div class="game-card">
+    <div class="table-wrap">
     <table class="game-table">
         <thead>
             <tr>
@@ -40,5 +41,6 @@
             @endforelse
         </tbody>
     </table>
+    </div>
 </div>
 @endsection

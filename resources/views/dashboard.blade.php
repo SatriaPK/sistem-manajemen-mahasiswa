@@ -11,7 +11,7 @@
 </div>
 
 <!-- Stat Cards -->
-<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem;">
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1rem;margin-bottom:1.5rem;">
     <div class="game-card" style="text-align:center;">
         <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#555555;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.75rem;">TOTAL MAHASISWA</div>
         <div style="font-family:'Press Start 2P',monospace;font-size:2rem;color:#f0f0f0;line-height:1;">{{ $totalMahasiswa }}</div>
@@ -50,6 +50,7 @@
         <div style="font-family:'JetBrains Mono',monospace;font-size:10px;color:#888;text-transform:uppercase;letter-spacing:0.08em;">MAHASISWA TERBARU</div>
         <a href="/mahasiswa" class="game-btn game-btn-sm">VIEW ALL &gt;</a>
     </div>
+    <div class="table-wrap">
     <table class="game-table">
         <thead>
             <tr>
@@ -74,5 +75,6 @@
             @endforelse
         </tbody>
     </table>
+    </div>
 </div>
 @endsection

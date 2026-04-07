@@ -9,6 +9,7 @@
 </div>
 
 <div class="game-card">
+    <div class="table-wrap">
     <table class="game-table">
         <thead>
             <tr>
@@ -44,6 +45,7 @@
             @endforelse
         </tbody>
     </table>
+    </div>
 
     @if ($mahasiswas->hasPages())
     <div style="display:flex;justify-content:space-between;align-items:center;margin-top:1rem;padding-top:1rem;border-top:1px solid #2a2a2a;">

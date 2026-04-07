@@ -27,6 +27,8 @@
             display: flex;
             flex-direction: column;
             overflow-y: auto;
+            transition: transform 0.2s ease;
+            z-index: 200;
         }
         .sidebar-brand {
             padding: 1.5rem 1.25rem 1rem;
@@ -90,12 +92,22 @@
             padding: 1rem 1.25rem;
             border-top: 1px solid #2a2a2a;
         }
+        /* Mobile overlay backdrop */
+        .sidebar-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.6);
+            z-index: 199;
+        }
+        .sidebar-backdrop.active { display: block; }
         /* Main content */
         .main-area {
             flex: 1;
             display: flex;
             flex-direction: column;
             overflow: hidden;
+            min-width: 0;
         }
         .main-header {
             background: #141414;
@@ -105,11 +117,35 @@
             align-items: center;
             justify-content: space-between;
             flex-shrink: 0;
+            gap: 0.75rem;
         }
+        .main-header-left {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            min-width: 0;
+        }
+        /* Hamburger button (mobile only) */
+        .menu-toggle {
+            display: none;
+            background: transparent;
+            border: 1px solid #2a2a2a;
+            color: #888888;
+            font-size: 14px;
+            padding: 0.35rem 0.6rem;
+            cursor: pointer;
+            font-family: 'JetBrains Mono', monospace;
+            flex-shrink: 0;
+            line-height: 1;
+        }
+        .menu-toggle:hover { border-color: #ffffff; color: #f0f0f0; }
         .main-header-greeting {
             font-family: 'JetBrains Mono', monospace;
             font-size: 12px;
             color: #888888;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         .main-header-greeting span {
             color: #f0f0f0;
@@ -118,6 +154,8 @@
             font-family: 'JetBrains Mono', monospace;
             font-size: 10px;
             color: #555555;
+            white-space: nowrap;
+            flex-shrink: 0;
         }
         .main-content {
             flex: 1;
@@ -132,6 +170,8 @@
             margin-bottom: 1.5rem;
             padding-bottom: 1rem;
             border-bottom: 1px solid #2a2a2a;
+            gap: 0.75rem;
+            flex-wrap: wrap;
         }
         .page-title {
             font-family: 'Press Start 2P', monospace;
@@ -159,7 +199,8 @@
             margin-bottom: 1rem;
         }
         /* Table */
-        .game-table { width: 100%; border-collapse: collapse; }
+        .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .game-table { width: 100%; border-collapse: collapse; min-width: 480px; }
         .game-table th {
             font-family: 'JetBrains Mono', monospace;
             font-size: 10px;
@@ -170,6 +211,7 @@
             border-bottom: 2px solid #2a2a2a;
             text-align: left;
             background: #141414;
+            white-space: nowrap;
         }
         .game-table td {
             font-family: 'JetBrains Mono', monospace;
@@ -203,12 +245,38 @@
             color: #ff3333;
             margin-top: 0.3rem;
         }
+
+        /* ── MOBILE RESPONSIVE ── */
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                top: 0; left: 0; bottom: 0;
+                transform: translateX(-100%);
+            }
+            .sidebar.open {
+                transform: translateX(0);
+                box-shadow: 4px 0 24px rgba(0,0,0,0.6);
+            }
+            .menu-toggle { display: inline-flex; }
+            .main-header { padding: 0.75rem 1rem; }
+            .main-header-right { display: none; }
+            .main-content { padding: 1rem; }
+            .game-card { padding: 1rem; }
+        }
+
+        @media (max-width: 480px) {
+            .main-content { padding: 0.75rem; }
+            .page-title { font-size: 8px; }
+        }
     </style>
 </head>
 <body>
 <div class="app-layout">
+    <!-- Mobile sidebar backdrop -->
+    <div class="sidebar-backdrop" id="sidebarBackdrop" onclick="closeSidebar()"></div>
+
     <!-- Sidebar -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
         <div class="sidebar-brand">
             <div class="sidebar-brand-text">MHS<br>SYS</div>
             <div class="sidebar-brand-sub">// v1.0.0</div>
@@ -250,8 +318,11 @@
     <!-- Main -->
     <div class="main-area">
         <header class="main-header">
-            <div class="main-header-greeting">
-                HELLO, <span>{{ strtoupper(Auth::user()->name) }}</span>
+            <div class="main-header-left">
+                <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Menu">&#9776;</button>
+                <div class="main-header-greeting">
+                    HELLO, <span>{{ strtoupper(Auth::user()->name) }}</span>
+                </div>
             </div>
             <div class="main-header-right">
                 {{ now()->format('Y-m-d H:i') }} &nbsp;|&nbsp; SESSION ACTIVE
@@ -296,6 +367,30 @@
 </div>
 
 <script>
+function toggleSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const backdrop = document.getElementById('sidebarBackdrop');
+    const isOpen = sidebar.classList.contains('open');
+    if (isOpen) {
+        closeSidebar();
+    } else {
+        sidebar.classList.add('open');
+        backdrop.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+}
+function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarBackdrop').classList.remove('active');
+    document.body.style.overflow = '';
+}
+// Close sidebar on nav link click (mobile)
+document.querySelectorAll('.sidebar-link').forEach(function(link) {
+    link.addEventListener('click', function() {
+        if (window.innerWidth <= 768) closeSidebar();
+    });
+});
+
 function openDeleteModal(action, name, type) {
     const modal = document.getElementById('deleteModal');
     const form  = document.getElementById('deleteModalForm');
