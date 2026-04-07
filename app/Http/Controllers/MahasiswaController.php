@@ -28,14 +28,21 @@ class MahasiswaController extends Controller
 
     public function show(Mahasiswa $mahasiswa)
     {
-        $mahasiswa->load('prodi.fakultas');
+        $mahasiswa = \App\Models\Mahasiswa::with('prodi.fakultas')->find($id);
+
+        if (!$mahasiswa) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data mahasiswa tidak ditemukan.'
+            ], 404);
+        }
 
         if (request()->wantsJson() || request()->is('api/*')) {
             return response()->json([
                 'success' => true,
                 'data' => $mahasiswa
             ]);
-    }
+        }
 
         return view('mahasiswa.show', compact('mahasiswa'));
     }
