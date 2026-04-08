@@ -24,7 +24,7 @@
     --font-sans: 'JetBrains Mono', monospace;
 }
 
-/* Base */
+/* Bases */
 *, *::before, *::after { box-sizing: border-box; }
 
 body {
