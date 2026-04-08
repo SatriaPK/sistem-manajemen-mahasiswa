@@ -11,39 +11,32 @@ class MahasiswaController extends Controller
 {
     public function index()
     {
-        $mahasiswas = Mahasiswa::with('prodi.fakultas')->get();
+        $data = Mahasiswa::with(['prodi.fakultas'])->get();
 
         return response()->json([
             'success' => true,
-            'message' => 'Data mahasiswa berhasil diambil',
-            'data'    => $mahasiswas,
-        ], 200);
+            'message' => 'Data mahasiswa berhasil diambil.',
+            'data'    => $data->map(fn($m) => $this->format($m)),
+        ]);
     }
 
-    public function show($id)
+    public function show(Mahasiswa $mahasiswa)
     {
-        $mahasiswa = Mahasiswa::with('prodi.fakultas')->find($id);
-
-        if (!$mahasiswa) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Data mahasiswa tidak ditemukan',
-            ], 404);
-        }
+        $mahasiswa->load('prodi.fakultas');
 
         return response()->json([
             'success' => true,
-            'message' => 'Detail data mahasiswa berhasil diambil',
-            'data'    => $mahasiswa,
-        ], 200);
+            'message' => 'Detail data mahasiswa berhasil diambil.',
+            'data'    => $this->format($mahasiswa),
+        ]);
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'nama'     => ['required', 'string', 'max:255'],
-            'nim'      => ['required', 'string', 'max:20', 'unique:mahasiswas,nim'],
-            'prodi_id' => ['required', 'exists:prodis,id'],
+        $request->validate([
+            'nama'     => 'required|string|max:255',
+            'nim'      => 'required|string|max:20|unique:mahasiswas,nim',
+            'prodi_id' => 'required|exists:prodis,id',
         ], [
             'nama.required'     => 'Nama mahasiswa wajib diisi.',
             'nim.required'      => 'NIM wajib diisi.',
@@ -52,27 +45,19 @@ class MahasiswaController extends Controller
             'prodi_id.exists'   => 'Prodi yang dipilih tidak valid.',
         ]);
 
-        $mahasiswa = Mahasiswa::create($validated);
+        $mahasiswa = Mahasiswa::create($request->only('nama', 'nim', 'prodi_id'));
+        $mahasiswa->load('prodi.fakultas');
 
         return response()->json([
             'success' => true,
-            'message' => 'Data mahasiswa berhasil ditambahkan',
-            'data'    => $mahasiswa,
+            'message' => 'Data mahasiswa berhasil ditambahkan.',
+            'data'    => $this->format($mahasiswa),
         ], 201);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, Mahasiswa $mahasiswa)
     {
-        $mahasiswa = Mahasiswa::find($id);
-
-        if (!$mahasiswa) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Data mahasiswa tidak ditemukan',
-            ], 404);
-        }
-
-        $validated = $request->validate([
+        $request->validate([
             'nama'     => ['required', 'string', 'max:255'],
             'nim'      => ['required', 'string', 'max:20', Rule::unique('mahasiswas', 'nim')->ignore($mahasiswa->id)],
             'prodi_id' => ['required', 'exists:prodis,id'],
@@ -84,31 +69,42 @@ class MahasiswaController extends Controller
             'prodi_id.exists'   => 'Prodi yang dipilih tidak valid.',
         ]);
 
-        $mahasiswa->update($validated);
+        $mahasiswa->update($request->only('nama', 'nim', 'prodi_id'));
+        $mahasiswa->load('prodi.fakultas');
 
         return response()->json([
             'success' => true,
-            'message' => 'Data mahasiswa berhasil diperbarui',
-            'data'    => $mahasiswa->fresh('prodi.fakultas'),
-        ], 200);
+            'message' => 'Data mahasiswa berhasil diperbarui.',
+            'data'    => $this->format($mahasiswa),
+        ]);
     }
 
-    public function destroy($id)
+    public function destroy(Mahasiswa $mahasiswa)
     {
-        $mahasiswa = Mahasiswa::find($id);
-
-        if (!$mahasiswa) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Data mahasiswa tidak ditemukan',
-            ], 404);
-        }
-
         $mahasiswa->delete();
 
         return response()->json([
             'success' => true,
-            'message' => 'Data mahasiswa berhasil dihapus',
-        ], 200);
+            'message' => 'Data mahasiswa berhasil dihapus.',
+        ]);
+    }
+
+    private function format(Mahasiswa $m): array
+    {
+        return [
+            'id'       => $m->id,
+            'nama'     => $m->nama,
+            'nim'      => $m->nim,
+            'prodi_id' => $m->prodi_id,
+            'prodi'    => $m->prodi ? [
+                'id'          => $m->prodi->id,
+                'nama'        => $m->prodi->nama,
+                'fakultas_id' => $m->prodi->fakultas_id,
+                'fakultas'    => $m->prodi->fakultas ? [
+                    'id'   => $m->prodi->fakultas->id,
+                    'nama' => $m->prodi->fakultas->nama,
+                ] : null,
+            ] : null,
+        ];
     }
 }

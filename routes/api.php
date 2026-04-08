@@ -1,10 +1,21 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\MahasiswaController;
+use App\Http\Controllers\Api\FakultasController;
+use App\Http\Controllers\Api\ProdiController;
 
-Route::get('/mahasiswa',        [MahasiswaController::class, 'index']);
-Route::post('/mahasiswa',       [MahasiswaController::class, 'store']);
-Route::get('/mahasiswa/{id}',   [MahasiswaController::class, 'show']);
-Route::put('/mahasiswa/{id}',   [MahasiswaController::class, 'update']);
-Route::delete('/mahasiswa/{id}',[MahasiswaController::class, 'destroy']);
+// Public
+Route::post('/login', [AuthController::class, 'login']);
+
+// Protected
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+    Route::get('/dashboard', [DashboardController::class, 'index']);
+
+    Route::apiResource('mahasiswa', MahasiswaController::class);
+    Route::apiResource('fakultas', FakultasController::class);
+    Route::apiResource('prodi', ProdiController::class)->except(['show']);
+});
