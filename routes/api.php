@@ -16,6 +16,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index']);
 
     Route::apiResource('mahasiswa', MahasiswaController::class)->names('api.mahasiswa');
-    Route::apiResource('fakultas', FakultasController::class)->names('api.fakultas');
+    Route::apiResource('fakultas', FakultasController::class, [
+        'parameters' => ['fakultas' => 'fakultas'],
+        'names'      => 'api.fakultas',
+    ]);
     Route::apiResource('prodi', ProdiController::class)->except(['show'])->names('api.prodi');
 });
